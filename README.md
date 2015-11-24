@@ -10,6 +10,9 @@ I would like to kindly ask that this code isn't used in commercial applications 
 #General composition
 This repository is called "ARLibs" because the idea is - eventually - to have a few of them. Right now there's only one for dialogs. 
 
+#General philosophy
+The guiding principle of this set of libraries and tools is that the developer using them must be mainly exposed with the result rather than the process. To make this clear, think of a dialog: do we want to create it and then show it? Not quite, our main interest is in showing it. By hiding the way it is created, we give more exposure to the result (showing it) than to the process (create it, configure it, etc.). 
+
 #Dialogs
 You think you got that covered, don't you? :) Yeah, maybe you have a base class, a few methods, maybe even more than that and all works well. Good for you. But then you have to add new ones, you have to remember to add EVERY UNIT, everything must be in place. The framework provided here lets you write code such as this:
 
