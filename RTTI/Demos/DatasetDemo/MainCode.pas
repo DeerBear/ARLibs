@@ -1,0 +1,81 @@
+unit MainCode;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ARLibs.RTTI.DatasetBuilder.Attributes, DB,
+  ARLibs.RTTI.DatasetBuilder.ClientDataset, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids;
+
+type
+  TMainFrm = class(TForm)
+    DBGrid1: TDBGrid;
+    DataSource1: TDataSource;
+    CreateDatasetBtn: TButton;
+    procedure CreateDatasetBtnClick(Sender: TObject);
+  private
+    { Private declarations }
+    FBuilder : TCDSDatasetBuilder;
+  public
+    { Public declarations }
+  end;
+
+  TMyClass = class
+  private
+    FID: Integer;
+    FMyString: String;
+    FMyInt: Integer;
+    FExcluded: Boolean;
+    procedure SetID(const Value: Integer);
+    procedure SetMyInt(const Value: Integer);
+    procedure SetMyString(const Value: String);
+    procedure SetExcluded(const Value: Boolean);
+  public
+    [DataField('ID',ftAutoInc,0,0)]
+    [NoDisplay]
+    property ID: Integer read FID write SetID;
+    [Display('Custom String')]
+    property MyString: String read FMyString write SetMyString;
+    [Display('Custom Int')]
+    property MyInt: Integer read FMyInt write SetMyInt;
+    [Exclude]
+    property Excluded: Boolean read FExcluded write SetExcluded;
+  end;
+
+var
+  MainFrm: TMainFrm;
+
+implementation
+
+{$R *.dfm}
+
+{ TMyClass }
+
+procedure TMyClass.SetExcluded(const Value: Boolean);
+begin
+  FExcluded := Value;
+end;
+
+procedure TMyClass.SetID(const Value: Integer);
+begin
+  FID := Value;
+end;
+
+procedure TMyClass.SetMyInt(const Value: Integer);
+begin
+  FMyInt := Value;
+end;
+
+procedure TMyClass.SetMyString(const Value: String);
+begin
+  FMyString := Value;
+end;
+
+procedure TMainFrm.CreateDatasetBtnClick(Sender: TObject);
+begin
+  FBuilder := TCDSDatasetBuilder.Create;
+  FBuilder.BuildDataset( TMyClass );
+  DataSource1.DataSet := FBuilder.Dataset;
+end;
+
+end.

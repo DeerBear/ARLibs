@@ -1,0 +1,171 @@
+unit ARLibs.RTTI.DatasetBuilder;
+
+interface
+
+uses Classes, DB, ARLibs.RTTI.DatasetBuilder.Attributes, Generics.Collections,
+     ARLibs.RTTI.Interfaces, System.Rtti;
+
+Type
+  // Hold a reference to the interface
+  TColumnInfo = record
+    PropertyData: IRttiProperty;
+  end;
+
+  TDatasetBuilder<T: TDataset> = class
+  private
+    FColumnInfo : TDictionary<string,TColumnInfo>;
+  strict protected
+    function NewFieldDef: TFieldDef;virtual;abstract;
+    procedure CreateDataset;virtual;abstract;
+    // Override this to return the dataset.
+    function GetDataset: T;virtual;abstract;
+    function GetDatasetFields: TFields;virtual;abstract;
+    procedure ProcessField( AField: TField;PropertyData: IRttiProperty );virtual;abstract;
+    function SupportsPrimaryKey: Boolean;virtual;abstract;
+    procedure AddPrimaryKeyFlag( AFieldDef: TFieldDef );virtual;abstract;
+    function SupportsUniqueValues: Boolean;virtual;abstract;
+    procedure AddUniqueValuesFlag( AFieldDef: TFieldDef );virtual;abstract;
+    procedure ProcessFields( DataSetFields: TFields );
+
+    // These are to actually build the field definitions
+    function IncludeProperty( AName: String;AProperty: IRttiProperty ) : Boolean;
+    procedure AddField( AName: String;AProperty: IRttiProperty );
+    function TypeKindToFieldType( ATypeKind: TTypeKind ) : TFieldType;
+  public
+    constructor Create;virtual;
+    procedure BuildDataset( AClass: TClass );
+    destructor Destroy; override;
+
+    property Dataset: T read GetDataset;
+  end;
+
+const StringTypeKinds      = [ tkString,tkUnicodeString,tkLString,tkWString,tkUString,tkShortString ];
+      CharTypeKinds        = [ tkChar,tkWChar,tkAnsiChar,tkWideChar ];
+      IntTypeKinds         = [ tkInteger,tkEnumeration,tkSet ];
+      // These are all those types that are quite difficult to
+      // reconcile into a field.
+      UnsupportedTypeKinds = [ tkUnknown,tkClass,tkMethod,tkVariant,tkArray,tkRecord,
+                              tkInterface,tkDynArray,tkClassRef,tkPointer,tkProcedure ];
+
+// Bug in the generics implementation: DO NOT TOUCH THIS!
+var ctx: TRttiContext;
+
+implementation
+
+uses ARLibs.RTTI.Core;
+
+{ TDatasetBuilder<T> }
+
+procedure TDatasetBuilder<T>.AddField(AName: String; AProperty: IRttiProperty);
+var FieldDef: TFieldDef;
+    DataField: DataFieldAttribute;
+    Display: DisplayAttribute;
+    ColumnInfo : TColumnInfo;
+begin
+  // Create a new field def
+  FieldDef := NewFieldDef;
+  // We can set it as invisible here if required.
+  if AProperty.AttributeExists( 'Display' ) then
+  begin
+    Display := DisplayAttribute( AProperty.Attribute[ 'Display' ] );
+    if Display.Visible = False then
+      //System.Include( FieldDef.Attributes,TFieldAttribute.faHiddenCol );
+      FieldDef.Attributes := FieldDef.Attributes + [faHiddenCol];
+  end;
+
+  if AProperty.AttributeExists( 'NoDisplay' ) then
+  begin
+    FieldDef.Attributes := FieldDef.Attributes+[TFieldAttribute.faHiddenCol];
+  end;
+
+  // Do we have a custom definition?
+  if AProperty.AttributeExists( 'DataField' ) then
+  begin
+    DataField := DataFieldAttribute( AProperty.Attribute[ 'DataField' ] );
+    FieldDef.Name := DataField.Name;
+    FieldDef.Size := DataField.Size;
+    FieldDef.DataType := DataField.DataType;
+    FieldDef.Precision := DataField.Precision;
+  end
+  else
+  begin
+    FieldDef.Name := AName;
+    FieldDef.DataType := TypeKindToFieldType( AProperty.GetType );
+    if AProperty.GetType in StringTypeKinds then
+      FieldDef.Size := 255;
+  end;
+
+  // The base field definition does NOT support primary keys, but some
+  // datasets do support it, so include support.
+  if AProperty.AttributeExists( 'PrimaryKey' ) And SupportsPrimaryKey then
+    AddPrimaryKeyFlag( FieldDef );
+  if AProperty.AttributeExists( 'UniqueValues' ) And SupportsUniqueValues then
+    AddUniqueValuesFlag( FieldDef );
+  if AProperty.AttributeExists( 'Required' ) then
+    //Include( FieldDef.Attributes,faRequired );
+    FieldDef.Attributes := FieldDef.Attributes + [TFieldAttribute.faReadonly];
+  ColumnInfo.PropertyData := AProperty;
+  FColumnInfo.Add( FieldDef.Name,ColumnInfo );
+end;
+
+procedure TDatasetBuilder<T>.BuildDataset(AClass: TClass);
+var Properties: IRttiPropertyHandler;
+begin
+  Properties := TRttiPropertyHandlerImpl.Create( ctx );
+  // Examine the class and retrieve all properties and attributes
+  Properties.Examine( AClass );
+  Properties.ForEach( AddField,IncludeProperty );
+  CreateDataset;
+  ProcessFields( GetDatasetFields );
+end;
+
+constructor TDatasetBuilder<T>.Create;
+begin
+  inherited Create;
+  FColumnInfo := TDictionary<string,TColumnInfo>.Create;
+end;
+
+destructor TDatasetBuilder<T>.Destroy;
+begin
+  FColumnInfo.Free;
+  inherited;
+end;
+
+function TDatasetBuilder<T>.IncludeProperty(AName: String;
+  AProperty: IRttiProperty): Boolean;
+begin
+  // It is useless to include stuff we do not know how to handle.
+  Result := Not ( AProperty.AttributeExists( 'Exclude' ) or
+                  ( AProperty.GetType in UnsupportedTypeKinds ) );
+end;
+
+procedure TDatasetBuilder<T>.ProcessFields(DataSetFields: TFields);
+var CurrentField: TField;
+begin
+ for CurrentField in DataSetFields do
+  begin
+    ProcessField( CurrentField,FColumnInfo.Items[ CurrentField.FieldName ].PropertyData );
+  end;
+end;
+
+function TDatasetBuilder<T>.TypeKindToFieldType(
+  ATypeKind: TTypeKind): TFieldType;
+begin
+  if ATypeKind in StringTypeKinds then
+    Result := ftWideString
+  else if ATypeKind in IntTypeKinds then
+          Result := ftInteger
+  else if ATypeKind in CharTypeKinds then
+          Result := ftWord
+  else
+  begin
+    case ATypeKind of
+      tkFloat: Result := ftExtended;
+      tkInt64: Result := ftLargeint;
+    else
+      Result := ftUnknown;
+    end;
+  end;
+end;
+
+end.

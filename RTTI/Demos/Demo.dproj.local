@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2015/05/14 08:21:34.000.804,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/07/22 15:25:51.000.303,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\GridPaneView1.pas</Transaction>
+    <Transaction>2015/07/22 15:26:00.000.458,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\SplitPaneView1.pas</Transaction>
+    <Transaction>2015/08/31 17:03:42.000.260,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/09/20 11:18:51.000.729,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/09/20 11:28:33.000.394,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/09/20 11:52:01.000.430,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/09/26 11:13:39.000.023,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/10/30 15:13:14.000.740,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/12/18 15:11:41.000.954,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/12/26 08:37:38.000.474,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/12/27 07:14:28.000.141,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/02/13 09:20:26.000.527,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/02/16 16:44:25.000.097,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/03/18 16:58:43.000.612,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/03/26 18:29:28.000.704,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/03/26 18:32:04.000.865,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\ServerMethodsUnit1.pas</Transaction>
+    <Transaction>2016/03/26 18:32:04.000.449,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/03/26 18:32:05.000.269,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\ServerContainerUnit1.pas</Transaction>
+    <Transaction>2016/07/12 22:21:27.000.293,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/07/14 16:42:57.512,=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/07/14 16:45:47.931,C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\Demos\RTTIDemo.dfm=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2016/07/14 16:45:47.931,C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\Demos\RTTIDemo.pas=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/07/14 16:46:06.581,C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\Demos\Demo.dproj=C:\Users\Andrea\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2016/07/14 16:46:26.841,=C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\ARLibs.RTTI.Core.pas</Transaction>
+    <Transaction>2016/07/14 16:46:26.935,=C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\ARLibs.RTTI.Interfaces.pas</Transaction>
+    <Transaction>2016/07/14 18:42:55.495,C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\Core\ARLibs.RTTI.Core.pas=C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\ARLibs.RTTI.Core.pas</Transaction>
+    <Transaction>2016/07/14 18:43:04.990,C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\Core\ARLibs.RTTI.Interfaces.pas=C:\Users\Andrea\Documents\GitHub\ARLibs\RTTI\ARLibs.RTTI.Interfaces.pas</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,31 @@
+unit ARLibs.Dialogs.Base.Data.Form;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ARLibs.Dialogs.Base.Form, DB;
+
+type
+  TARBaseDialogDataForm = class(TARBaseDialogForm)
+  private
+    function GetDataset: TDataset;
+    function GetDataSource: TDataSource;
+    procedure SetDataset(const Value: TDataset);
+    procedure SetDataSource(const Value: TDataSource);
+    { Private declarations }
+  strict protected
+    property DataSource : TDataSource read GetDataSource write SetDataSource;
+    property Dataset : TDataset read GetDataset write SetDataset;
+  public
+    { Public declarations }
+  end;
+
+var
+  ARBaseDialogDataForm: TARBaseDialogDataForm;
+
+implementation
+
+{$R *.dfm}
+
+end.

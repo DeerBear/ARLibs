@@ -1,0 +1,44 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 351
+  ClientWidth = 594
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object memoProperties: TMemo
+    Left = 24
+    Top = 32
+    Width = 185
+    Height = 233
+    TabOrder = 0
+    OnChange = memoPropertiesChange
+  end
+  object PropertyNamesBtn: TButton
+    Left = 264
+    Top = 80
+    Width = 185
+    Height = 25
+    Caption = 'Property name list'
+    TabOrder = 1
+    OnClick = PropertyNamesBtnClick
+  end
+  object ForEachBtn: TButton
+    Left = 272
+    Top = 184
+    Width = 75
+    Height = 25
+    Caption = 'For Each'
+    TabOrder = 2
+    OnClick = ForEachBtnClick
+  end
+end

@@ -1,0 +1,172 @@
+unit ARLibs.RTTI.Core;
+
+interface
+
+uses Classes, ARLibs.Rtti.Interfaces, Generics.Collections, System.Rtti;
+
+Type
+
+  TCustomAttributeClass = class of TCustomAttribute;
+
+  TPropertyImpl = class( TInterfacedObject,IRttiProperty )
+  private
+    FAttributeList : TDictionary<string,TCustomAttribute>;
+    FProperty : TRttiProperty;
+  protected
+    function AttributeExists(AName: string): Boolean;
+    function GetAttribute(Index: string): TCustomAttribute;
+    function GetType: TTypeKind;
+    procedure EnumerateAttributes;
+    function GetRttiProperty: TRttiProperty;
+    function GetTypeName: String;
+  public
+    constructor Create( AProperty : TRttiProperty );
+    destructor Destroy; override;
+  end;
+
+  TRttiPropertyHandlerImpl = class( TInterfacedObject,IRttiPropertyHandler )
+  private
+    FPropertyList : TDictionary<string,TPropertyImpl>;
+    FContext: TRttiContext;
+  protected
+    procedure Examine(AClass: TClass);
+    function GetProperty(Index: string): IRttiProperty;
+    function GetPropertyCount: Integer;
+    procedure FillPropertyNames( var NameList: TStringList );
+    procedure ForEach( AProc: TRttiPropertyProc;IncludeFunc: TRttiPropertyFunc );
+  public
+    constructor Create( AContext: TRttiContext );
+    destructor Destroy; override;
+  end;
+
+implementation
+
+uses SysUtils;
+
+{ TPropertyImpl }
+
+function TPropertyImpl.AttributeExists(AName: string): Boolean;
+begin
+  Result := FAttributeList.ContainsKey( AName );
+end;
+
+constructor TPropertyImpl.Create( AProperty : TRttiProperty );
+begin
+  inherited Create;
+  FProperty := AProperty;
+  FAttributeList := TDictionary<string,TCustomAttribute>.Create;
+  EnumerateAttributes;
+end;
+
+destructor TPropertyImpl.Destroy;
+begin
+  FAttributeList.Free;
+  inherited;
+end;
+
+procedure TPropertyImpl.EnumerateAttributes;
+var Attributes: TArray<TCustomAttribute>;
+    CurrentAttribute: TCustomAttribute;
+
+    function GetAttrName: String;
+    begin
+      Result := CurrentAttribute.ClassName;
+      // The real attribute name that we use in the source code following the convention
+      Result := StringReplace( Result,'Attribute','',[rfReplaceAll,rfIgnoreCase] );
+    end;
+begin
+  Attributes := FProperty.GetAttributes;
+  for CurrentAttribute in Attributes do
+  begin
+    FAttributeList.Add( GetAttrName,CurrentAttribute );
+  end;
+end;
+
+function TPropertyImpl.GetAttribute(Index: string): TCustomAttribute;
+begin
+  Result := FAttributeList.Items[ Index ];
+end;
+
+function TPropertyImpl.GetRttiProperty: TRttiProperty;
+begin
+  Result := FProperty;
+end;
+
+function TPropertyImpl.GetType: TTypeKind;
+begin
+  Result := GetRttiProperty.PropertyType.TypeKind;
+end;
+
+function TPropertyImpl.GetTypeName: String;
+begin
+  Result := GetRttiProperty.PropertyType.Name;
+end;
+
+{ TRttiPropertyHandlerImpl }
+
+constructor TRttiPropertyHandlerImpl.Create(AContext: TRttiContext);
+begin
+  inherited Create;
+  FContext := AContext;
+  FPropertyList := TDictionary<string,TPropertyImpl>.Create;
+end;
+
+destructor TRttiPropertyHandlerImpl.Destroy;
+begin
+  FPropertyList.Free;
+  inherited;
+end;
+
+procedure TRttiPropertyHandlerImpl.Examine(AClass: TClass);
+var RttiProperties: TArray<TRttiProperty>;
+    CurrentRttiProperty : TRttiProperty;
+begin
+  RttiProperties := FContext.GetType( AClass ).GetProperties;
+  for CurrentRttiProperty in RttiProperties do
+  begin
+    FPropertyList.Add( CurrentRttiProperty.Name,TPropertyImpl.Create( CurrentRttiProperty ) );
+  end;
+end;
+
+procedure TRttiPropertyHandlerImpl.FillPropertyNames(var NameList: TStringList);
+var KeyList: TArray<string>;
+    CurrentKey: String;
+
+begin
+  if FPropertyList.Count = 0 then
+    Exit;
+  if Not Assigned( NameList ) then
+    NameList := TStringList.Create;
+
+  KeyList := FPropertyList.Keys.ToArray;
+  NameList.Clear;
+  for CurrentKey in KeyList do
+  begin
+    NameList.Add( CurrentKey );
+  end;
+end;
+
+procedure TRttiPropertyHandlerImpl.ForEach(AProc: TRttiPropertyProc;
+  IncludeFunc: TRttiPropertyFunc);
+var PropertyPair: TPair<string,TPropertyImpl>;
+    RttiProperty: IRttiProperty;
+begin
+  for PropertyPair in FPropertyList do
+  begin
+     RttiProperty :=  IRttiProperty( PropertyPair.Value );
+     if IncludeFunc( PropertyPair.Key,RttiProperty ) then
+       AProc( PropertyPair.Key,RttiProperty );
+  end;
+end;
+
+function TRttiPropertyHandlerImpl.GetProperty(Index: string): IRttiProperty;
+begin
+  Result := FPropertyList.Items[ Index ];
+end;
+
+function TRttiPropertyHandlerImpl.GetPropertyCount: Integer;
+begin
+  Result := FPropertyList.Count;
+end;
+
+end.

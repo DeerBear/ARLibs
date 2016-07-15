@@ -1,0 +1,14 @@
+program DataSetDemo;
+
+uses
+  Vcl.Forms,
+  MainCode in 'MainCode.pas' {MainFrm};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TMainFrm, MainFrm);
+  Application.Run;
+end.

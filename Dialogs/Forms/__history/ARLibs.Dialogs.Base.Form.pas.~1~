@@ -1,0 +1,97 @@
+{
+  USAGE: This form allows developers to make dialog forms easier.
+         When using a form as dialog, in the vast majority of
+         cases all you need is a boolean sort of approach. Also, in rare
+         cases, you may need a way to cancel the form entirely.
+         This is what is provided here.
+}
+unit ARLibs.Dialogs.Base.Form;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
+
+type
+  TARBaseDialogForm = class(TForm)
+    procedure FormCreate(Sender: TObject);
+  private
+    FModalFalse: TModalResult;
+    FModalTrue: TModalResult;
+    FUseFormDefaults: Boolean;
+    procedure SetModalBoolean(const Value: Boolean);
+    procedure SetModalFalse(const Value: TModalResult);
+    procedure SetModalTrue(const Value: TModalResult);
+    procedure SetUseFormDefaults(const Value: Boolean);
+    { Private declarations }
+  protected
+    procedure Cancel;virtual;
+    // It is not uncommon for me to forget position and borders.
+    // This does those things by default.
+    procedure FormDefaults;virtual;
+    // Write only: we will be checking ModalResult on exit
+    // because this is the most compatible way of doing things.
+    // It is also protected so that developers are not enticed to use it
+    // outside the form itself.
+    property ModalBoolean:  Boolean write SetModalBoolean;
+  public
+    { Public declarations }
+  published
+    // At some point I might want to register it as a module, even
+    // though at the moment I don't see it as very necessary.
+    property ModalTrue: TModalResult read FModalTrue write SetModalTrue;
+    property ModalFalse: TModalResult read FModalFalse write SetModalFalse;
+    property UseFormDefaults: Boolean read FUseFormDefaults write SetUseFormDefaults default true;
+  end;
+
+var
+  ARBaseDialogForm: TARBaseDialogForm;
+
+implementation
+
+{$R *.dfm}
+
+{ TForm1 }
+
+procedure TARBaseDialogForm.Cancel;
+begin
+  ModalResult := mrCancel;
+end;
+
+procedure TARBaseDialogForm.FormCreate(Sender: TObject);
+begin
+  if UseFormDefaults then
+    FormDefaults;
+end;
+
+procedure TARBaseDialogForm.FormDefaults;
+begin
+  Position := poOwnerFormCenter;
+  BorderStyle := bsDialog;
+end;
+
+procedure TARBaseDialogForm.SetModalBoolean(const Value: Boolean);
+begin
+  if Value then
+    ModalResult := ModalTrue
+  else
+    ModalResult := ModalFalse;
+end;
+
+procedure TARBaseDialogForm.SetModalFalse(const Value: TModalResult);
+begin
+  FModalFalse := Value;
+end;
+
+procedure TARBaseDialogForm.SetModalTrue(const Value: TModalResult);
+begin
+  FModalTrue := Value;
+end;
+
+procedure TARBaseDialogForm.SetUseFormDefaults(const Value: Boolean);
+begin
+  FUseFormDefaults := Value;
+end;
+
+end.
