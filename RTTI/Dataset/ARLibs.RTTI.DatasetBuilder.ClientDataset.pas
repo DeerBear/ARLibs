@@ -8,12 +8,11 @@ Type
 
   TCDSDatasetBuilder = class( TDatasetBuilder<TClientDataSet> )
   strict private
-    FDataset: TClientDataSet;
   strict protected
     function NewFieldDef: TFieldDef;override;
     procedure CreateDataset;override;
-    function GetDataset: TClientDataSet;override;
     function GetDatasetFields: TFields;override;
+    procedure InitDataset( var ADataset: TClientDataSet );override;
     procedure ProcessField( AField: TField;PropertyData: IRttiProperty );override;
     function SupportsPrimaryKey: Boolean;override;
     procedure AddPrimaryKeyFlag( AFieldDef: TFieldDef );override;
@@ -45,29 +44,28 @@ end;
 constructor TCDSDatasetBuilder.Create;
 begin
   inherited;
-  FDataset := TClientDataSet.Create( nil );
 end;
 
 procedure TCDSDatasetBuilder.CreateDataset;
 begin
   inherited;
-  FDataset.CreateDataSet;
+  GetDataset.CreateDataSet;
 end;
 
 destructor TCDSDatasetBuilder.Destroy;
 begin
-  FDataset.Free;
   inherited;
-end;
-
-function TCDSDatasetBuilder.GetDataset: TClientDataSet;
-begin
-  Result := FDataset;
 end;
 
 function TCDSDatasetBuilder.GetDatasetFields: TFields;
 begin
   Result := Dataset.Fields;
+end;
+
+procedure TCDSDatasetBuilder.InitDataset(var ADataset: TClientDataSet);
+begin
+  inherited;
+  ADataset := TClientDataSet.Create( Nil );
 end;
 
 function TCDSDatasetBuilder.NewFieldDef: TFieldDef;

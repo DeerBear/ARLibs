@@ -35,8 +35,23 @@ object MainFrm: TMainFrm
     TabOrder = 1
     OnClick = CreateDatasetBtnClick
   end
+  object UseDatasetBtn: TButton
+    Left = 448
+    Top = 232
+    Width = 75
+    Height = 25
+    Caption = 'Use dataset'
+    TabOrder = 2
+    OnClick = UseDatasetBtnClick
+  end
   object DataSource1: TDataSource
     Left = 480
     Top = 96
+  end
+  object CDS: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 560
+    Top = 64
   end
 end

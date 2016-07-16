@@ -14,11 +14,13 @@ Type
   TDatasetBuilder<T: TDataset> = class
   private
     FColumnInfo : TDictionary<string,TColumnInfo>;
+    FDataset: T;
   strict protected
     function NewFieldDef: TFieldDef;virtual;abstract;
     procedure CreateDataset;virtual;abstract;
     // Override this to return the dataset.
-    function GetDataset: T;virtual;abstract;
+    function GetDataset: T;virtual;
+    procedure InitDataset( var ADataset: T );virtual;abstract;
     function GetDatasetFields: TFields;virtual;abstract;
     procedure ProcessField( AField: TField;PropertyData: IRttiProperty );virtual;abstract;
     function SupportsPrimaryKey: Boolean;virtual;abstract;
@@ -32,7 +34,8 @@ Type
     procedure AddField( AName: String;AProperty: IRttiProperty );
     function TypeKindToFieldType( ATypeKind: TTypeKind ) : TFieldType;
   public
-    constructor Create;virtual;
+    constructor Create;overload;virtual;
+    constructor Create( ADataSet: T );reintroduce;overload;virtual;
     procedure BuildDataset( AClass: TClass );
     destructor Destroy; override;
 
@@ -119,16 +122,30 @@ begin
   ProcessFields( GetDatasetFields );
 end;
 
+constructor TDatasetBuilder<T>.Create(ADataSet: T);
+begin
+  inherited Create;
+  FDataset := ADataSet;
+  FColumnInfo := TDictionary<string,TColumnInfo>.Create;
+end;
+
 constructor TDatasetBuilder<T>.Create;
 begin
   inherited Create;
   FColumnInfo := TDictionary<string,TColumnInfo>.Create;
+  InitDataset( FDataset );
 end;
 
 destructor TDatasetBuilder<T>.Destroy;
 begin
   FColumnInfo.Free;
+  FDataset.Free;
   inherited;
+end;
+
+function TDatasetBuilder<T>.GetDataset: T;
+begin
+  Result := FDataset;
 end;
 
 function TDatasetBuilder<T>.IncludeProperty(AName: String;

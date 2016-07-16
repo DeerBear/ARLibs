@@ -5,14 +5,18 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ARLibs.RTTI.DatasetBuilder.Attributes, DB,
-  ARLibs.RTTI.DatasetBuilder.ClientDataset, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids;
+  ARLibs.RTTI.DatasetBuilder.ClientDataset, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids,
+  Datasnap.DBClient;
 
 type
   TMainFrm = class(TForm)
     DBGrid1: TDBGrid;
     DataSource1: TDataSource;
     CreateDatasetBtn: TButton;
+    UseDatasetBtn: TButton;
+    CDS: TClientDataSet;
     procedure CreateDatasetBtnClick(Sender: TObject);
+    procedure UseDatasetBtnClick(Sender: TObject);
   private
     { Private declarations }
     FBuilder : TCDSDatasetBuilder;
@@ -76,6 +80,15 @@ begin
   FBuilder := TCDSDatasetBuilder.Create;
   FBuilder.BuildDataset( TMyClass );
   DataSource1.DataSet := FBuilder.Dataset;
+end;
+
+procedure TMainFrm.UseDatasetBtnClick(Sender: TObject);
+begin
+  if Assigned( FBuilder ) then
+    FBuilder.Free;
+  FBuilder := TCDSDatasetBuilder.Create( CDS );
+  FBuilder.BuildDataset( TMyClass );
+  DataSource1.DataSet := CDS;
 end;
 
 end.
