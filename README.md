@@ -14,7 +14,7 @@ This repository is called "ARLibs" because the idea is - eventually - to have a 
 The guiding principle of this set of libraries and tools is that the developer using them must be mainly exposed with the result rather than the process. To make this clear, think of a dialog: do we want to create it and then show it? Not quite, our main interest is in showing it. By hiding the way it is created, we give more exposure to the result (showing it) than to the process (create it, configure it, etc.). Another core principle is that I am trying to avoid writing
 custom code as much as possible, so everywhere possible I will prefer standard language constructs/classes over
 custom made ones. Also, wherever possible, methods should be as short, simple and focused as possible. I am convinced
-that the easiest way to achieve Single Responsibility within a class the best way is to achieve it inside every
+that the easiest way to achieve Single Responsibility within a class is to achieve it inside every
 method. 
 
 #Dialogs
